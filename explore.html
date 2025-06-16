@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Soundverse explore</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+
+    .reel {
+      scroll-snap-align: start;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #222;
+    }
+
+    h2 {
+      margin: 10px;
+      font-size: 24px;
+      color: #0ff;
+    }
+
+    audio {
+      width: 90%;
+      margin-top: 20px;
+    }
+
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="explore-feed"></div>
+
+<script>
+  const mp3Urls = [
+  "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_vocals.mp3",
+  "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_drums.mp3",
+  "https://storage.googleapis.com/x-one/685032e6aadca53428ca27b1/662f618a212314b755c23a47/uploaded-audio-685032e6aadca53428ca27b1-1750086413_20250616150804_other.mp3",
+  "https://storage.googleapis.com/x-one/6850328bd07c68f80d168377/685032f362a047cd10a03423/tmpwi0u_zie.mp3",
+  "https://storage.googleapis.com/x-one/685032e977c307b04a959b69/685032b1d40f27f57eb11607/tmpyga9p7jb.mp3",
+  "https://storage.googleapis.com/x-one/685036c187e259a2f2cf57b2/662f618a212314b755c23a47/uploaded-audio-685036c187e259a2f2cf57b2-1750087382_20250616152420_drums.mp3"
+  ];
+
+  const feed = document.getElementById('explore-feed');
+  const audioRefs = [];
+
+  mp3Urls.forEach((url, index) => {
+    const reel = document.createElement('div');
+    reel.className = 'reel';
+
+    const title = document.createElement('h2');
+    title.textContent = `Track ${index + 1}`;
+
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.preload = 'metadata';
+    audio.src = url;
+
+    reel.appendChild(title);
+    reel.appendChild(audio);
+    feed.appendChild(reel);
+    audioRefs.push(audio);
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const audio = entry.target.querySelector('audio');
+      if (!audio) return;
+
+      if (entry.isIntersecting) {
+        // Pause all others
+        audioRefs.forEach(a => {
+          if (a !== audio) {
+            a.pause();
+            a.currentTime = 0;
+          }
+        });
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    });
+  }, {
+    threshold: 0.7
+  });
+
+  document.querySelectorAll('.reel').forEach(card => observer.observe(card));
+</script>
+
+</body>
+</html>
