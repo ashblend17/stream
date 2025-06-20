@@ -43,6 +43,9 @@
   </style>
 </head>
 <body>
+<div id="tap-to-start" style="position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: black; color: white; display: flex; align-items: center; justify-content: center;">
+  <p>Tap to start the music 🎵</p>
+</div>
 
 <div id="explore-feed"></div>
 
@@ -115,17 +118,16 @@
     document.querySelectorAll('.reel').forEach(card => observer.observe(card));
   });
   const enableAutoplayOnce = () => {
-    if (audioRefs[0]) {
-      audioRefs[0].play().catch(err => {
-        console.log("Autoplay blocked:", err.message);
-      });
-    }
-    document.removeEventListener('click', enableAutoplayOnce);
-    document.removeEventListener('touchstart', enableAutoplayOnce);
-  };
+  audioRefs[0]?.play().then(() => {
+    document.getElementById('tap-to-start')?.remove();
+  }).catch(err => {
+    console.log("Autoplay blocked:", err.message);
+  });
+};
 
-  document.addEventListener('click', enableAutoplayOnce);
-  document.addEventListener('touchstart', enableAutoplayOnce);
+document.addEventListener('click', enableAutoplayOnce, { once: true });
+document.addEventListener('touchend', enableAutoplayOnce, { once: true });
+
 </script>
 
 
