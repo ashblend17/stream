@@ -72,6 +72,7 @@
 
     const title = document.createElement('h2');
     title.textContent = `Track ${index + 1}: ${mp3Urls[index].split('/').pop()}`;
+    title.align = 'center';
 
     const description = document.createElement('div');
     description.textContent = 'The audio is partially downloaded and will start playing when you scroll to this section. It will stop downloading when scrolled away. mp3 and wav example formats are included. It remains in cache until removed';
