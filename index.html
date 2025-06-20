@@ -48,16 +48,16 @@
 
 <script>
   const mp3Urls = [
-  "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_vocals.mp3",
-  "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_drums.mp3",
-  "https://storage.googleapis.com/x-one/685032e6aadca53428ca27b1/662f618a212314b755c23a47/uploaded-audio-685032e6aadca53428ca27b1-1750086413_20250616150804_other.mp3",
-  "https://storage.googleapis.com/x-one/6850328bd07c68f80d168377/685032f362a047cd10a03423/tmpwi0u_zie.mp3",
-  "https://storage.googleapis.com/x-one/685032e977c307b04a959b69/685032b1d40f27f57eb11607/tmpyga9p7jb.mp3",
-  "https://storage.googleapis.com/x-one/685036c187e259a2f2cf57b2/662f618a212314b755c23a47/uploaded-audio-685036c187e259a2f2cf57b2-1750087382_20250616152420_drums.mp3",
-  "https://storage.googleapis.com/x-one/6850091e2ffd478a615b2914/685009a65ec3e98664b41b6e/xone20250616121921p1b0cm8n.wav",
-  "https://storage.googleapis.com/x-one/68512d50e6d9c869ca2f5c80/68512e2d3b162b82f5742fdc/xone202506171009413rz9h9ta.wav",
-  "https://storage.googleapis.com/x-one/683d72767fe72a1232650d05/68513e73edf1c49fafd74455/xone20250617100920cg3oyfz6.wav",
-  "https://storage.googleapis.com/x-one/68513c4f70eb89e838adf6f0/68513cc48cc020a604993071/xone202506171007334dr3inut.wav"
+    "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_vocals.mp3",
+    "https://storage.googleapis.com/x-one/6850327b413575e3adc03d3f/685031c962a981c3eb414442/tmphyqyzkvu_20250616151004_drums.mp3",
+    "https://storage.googleapis.com/x-one/685032e6aadca53428ca27b1/662f618a212314b755c23a47/uploaded-audio-685032e6aadca53428ca27b1-1750086413_20250616150804_other.mp3",
+    "https://storage.googleapis.com/x-one/6850328bd07c68f80d168377/685032f362a047cd10a03423/tmpwi0u_zie.mp3",
+    "https://storage.googleapis.com/x-one/685032e977c307b04a959b69/685032b1d40f27f57eb11607/tmpyga9p7jb.mp3",
+    "https://storage.googleapis.com/x-one/685036c187e259a2f2cf57b2/662f618a212314b755c23a47/uploaded-audio-685036c187e259a2f2cf57b2-1750087382_20250616152420_drums.mp3",
+    "https://storage.googleapis.com/x-one/6850091e2ffd478a615b2914/685009a65ec3e98664b41b6e/xone20250616121921p1b0cm8n.wav",
+    "https://storage.googleapis.com/x-one/68512d50e6d9c869ca2f5c80/68512e2d3b162b82f5742fdc/xone202506171009413rz9h9ta.wav",
+    "https://storage.googleapis.com/x-one/683d72767fe72a1232650d05/68513e73edf1c49fafd74455/xone20250617100920cg3oyfz6.wav",
+    "https://storage.googleapis.com/x-one/68513c4f70eb89e838adf6f0/68513cc48cc020a604993071/xone202506171007334dr3inut.wav"
   ];
 
   const feed = document.getElementById('explore-feed');
@@ -70,15 +70,18 @@
     const title = document.createElement('h2');
     title.textContent = `Track ${index + 1}: ${mp3Urls[index].split('/').pop()}`;
 
+    const description = document.createElement('div');
+    description.textContent = 'The audio is partially downloaded and will start playing when you scroll to this section. It will stop downloading when scrolled away. mp3 and wav example formats are included. It remains in cache until removed';
+    description.style.color = '#888';
+    description.style.padding = '10px 20px';
+    description.style.textAlign = 'center';
+
     const audio = document.createElement('audio');
     audio.controls = true;
     audio.preload = 'metadata';
     audio.src = url;
 
-    const tex = document.createElement('div');
-    tex.textContent = 'The audio is partially downloaded and will start playing when you scroll to this section. It will stop downloading when scrolled away. mp3 and wav example formats are included. It remains in cache until removed';
-
-    reel.appendChild(tex); // Placeholder for future content
+    reel.appendChild(description);
     reel.appendChild(title);
     reel.appendChild(audio);
     feed.appendChild(reel);
@@ -107,8 +110,24 @@
     threshold: 0.7
   });
 
-  document.querySelectorAll('.reel').forEach(card => observer.observe(card));
+  // Observe after DOM elements are added
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.reel').forEach(card => observer.observe(card));
+  });
+  const enableAutoplayOnce = () => {
+    if (audioRefs[0]) {
+      audioRefs[0].play().catch(err => {
+        console.log("Autoplay blocked:", err.message);
+      });
+    }
+    document.removeEventListener('click', enableAutoplayOnce);
+    document.removeEventListener('touchstart', enableAutoplayOnce);
+  };
+
+  document.addEventListener('click', enableAutoplayOnce);
+  document.addEventListener('touchstart', enableAutoplayOnce);
 </script>
+
 
 </body>
 </html>
